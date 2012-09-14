@@ -216,6 +216,10 @@ class DjangoSpider(DjangoBaseSpider):
             url_name = url_elem.scraped_obj_attr.name
             if(item and url_name in item):
                 url = item[url_name]
+                if not isinstance(url, basestring) or not (url.startswith('http://') or url.startswith('https://')):
+                    self.log("Ignoring item with url %s. This is not a valid url" % repr(url), log.ERROR)
+                    continue
+                
                 cnt = self.scraped_obj_class.objects.filter(url=item[url_name]).count()
                 cnt1 = self.scraper.get_standard_update_elems_from_detail_page().count()
                 cnt2 = self.scraper.get_from_detail_page_scrape_elems().count()
